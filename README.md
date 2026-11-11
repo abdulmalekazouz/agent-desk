@@ -36,14 +36,40 @@ source .venv/bin/activate   # .venv\Scripts\activate on Windows
 pip install -e ".[dev]"
 ```
 
+## Features
+
+- **A transparent agent loop.** `Agent.handle_message` decides (via the
+  LLM layer), checks permissions, calls a tool, and replies -- recording
+  every one of those steps to an inspectable `trace`.
+- **Mock inbox and file-listing tools**, each gated by its own
+  permission, with a revocable `PermissionRegistry`.
+
 ## Project layout
 
 ```
 src/agentdesk/
     agent/
-        tools.py    The Tool contract every sandboxed action implements
+        tools.py        The Tool contract every sandboxed action implements
+        mock_data.py      Sample inbox + a nested mock file tree
+        actions.py          Concrete tools: read_emails, list_files
+        permissions.py        The revocable permission registry
+        llm.py                  LLMProvider interface + the rule-based MockLLMProvider
+        agent.py                  The orchestrator (decide -> check -> call -> reply)
+        factory.py                  Builds a ready-to-use Agent with default tools
     gui/            PySide6 desktop UI (added once the agent core exists)
 tests/              pytest suite
+```
+
+## Usage (library)
+
+```python
+from agentdesk.agent.factory import build_default_agent
+
+agent = build_default_agent()
+response = agent.handle_message("check my inbox about budget")
+print(response.reply)
+for step in response.trace:
+    print(f"[{step.kind}] {step.detail}")
 ```
 
 ## Testing
