@@ -43,6 +43,9 @@ pip install -e ".[dev]"
   every one of those steps to an inspectable `trace`.
 - **Mock inbox and file-listing tools**, each gated by its own
   permission, with a revocable `PermissionRegistry`.
+- **Workflows.** Say "create workflow &lt;name&gt;: tool_one, tool_two" to
+  save a named, ordered list of tools, then "run workflow &lt;name&gt;" to
+  execute every step and see each one's outcome.
 
 ## Project layout
 
@@ -54,8 +57,10 @@ src/agentdesk/
         actions.py          Concrete tools: read_emails, list_files
         permissions.py        The revocable permission registry
         llm.py                  LLMProvider interface + the rule-based MockLLMProvider
-        agent.py                  The orchestrator (decide -> check -> call -> reply)
-        factory.py                  Builds a ready-to-use Agent with default tools
+        workflows.py              Workflow/WorkflowStore/WorkflowEngine
+        workflow_tools.py           create_workflow/run_workflow tools
+        agent.py                      The orchestrator (decide -> check -> call -> reply)
+        factory.py                      Builds a ready-to-use Agent with default tools
     gui/            PySide6 desktop UI (added once the agent core exists)
 tests/              pytest suite
 ```
@@ -65,11 +70,15 @@ tests/              pytest suite
 ```python
 from agentdesk.agent.factory import build_default_agent
 
-agent = build_default_agent()
-response = agent.handle_message("check my inbox about budget")
+bundle = build_default_agent()
+response = bundle.agent.handle_message("check my inbox about budget")
 print(response.reply)
 for step in response.trace:
     print(f"[{step.kind}] {step.detail}")
+
+bundle.agent.handle_message("create workflow Morning Briefing: read_emails, list_files")
+run_response = bundle.agent.handle_message("run workflow Morning Briefing")
+print(run_response.reply)
 ```
 
 ## Testing
@@ -90,6 +99,9 @@ ruff check src tests
   data, not any real account, inbox, or filesystem.
 - Workflows run entirely in memory for the lifetime of the app; nothing
   is scheduled or persisted to disk between runs.
+- A workflow step is just a tool name -- steps cannot carry their own
+  arguments (e.g. a `read_emails` step can't filter by a query the way
+  typing "check my inbox about budget" in chat can).
 - The permission system is a demonstration of the *pattern* (gate every
   tool call on an explicit, user-visible, revocable permission) rather
   than a production authorization system.
