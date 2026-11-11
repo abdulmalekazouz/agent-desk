@@ -46,6 +46,9 @@ pip install -e ".[dev]"
 - **Workflows.** Say "create workflow &lt;name&gt;: tool_one, tool_two" to
   save a named, ordered list of tools, then "run workflow &lt;name&gt;" to
   execute every step and see each one's outcome.
+- **A four-screen desktop GUI** (PySide6): Chat, a mock Inbox browser,
+  Workflows (create/run/list), and Permissions (toggle what the agent
+  can do) -- all backed by the same `Agent` underneath.
 
 ## Project layout
 
@@ -61,8 +64,12 @@ src/agentdesk/
         workflow_tools.py           create_workflow/run_workflow tools
         agent.py                      The orchestrator (decide -> check -> call -> reply)
         factory.py                      Builds a ready-to-use Agent with default tools
-    gui/            PySide6 desktop UI (added once the agent core exists)
-tests/              pytest suite
+    gui/
+        main_window.py      Sidebar nav + stacked screens
+        screens/              ChatScreen, InboxScreen, WorkflowsScreen, PermissionsScreen
+        styles.qss               A dark, modern Qt stylesheet
+    __main__.py          `python -m agentdesk` / the `agentdesk` console script
+tests/              pytest suite (GUI tests use pytest-qt + the Qt offscreen platform)
 ```
 
 ## Usage (library)
@@ -81,12 +88,41 @@ run_response = bundle.agent.handle_message("run workflow Morning Briefing")
 print(run_response.reply)
 ```
 
+## Running the desktop app
+
+```bash
+agentdesk
+# or: python -m agentdesk
+```
+
+### Chat
+
+![Chat screen](docs/screenshot-chat.jpg)
+
+### Mock Inbox
+
+![Inbox screen](docs/screenshot-inbox.jpg)
+
+### Workflows
+
+![Workflows screen](docs/screenshot-workflows.jpg)
+
+### Permissions
+
+![Permissions screen](docs/screenshot-permissions.jpg)
+
 ## Testing
 
 ```bash
 pytest --cov=agentdesk --cov-report=term-missing
 ruff check src tests
 ```
+
+GUI tests run against Qt's `offscreen` platform plugin (no real display
+required): `QT_QPA_PLATFORM=offscreen pytest` (this is also how CI runs
+them). Screenshots for this README were generated separately, from a
+small script that renders each screen via Qt's own `grab()` -- without
+ever opening a visible window.
 
 ## Limitations
 
