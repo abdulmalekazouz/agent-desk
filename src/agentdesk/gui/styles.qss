@@ -1,0 +1,104 @@
+/* A compact, modern dark theme for the Agent Desk window. */
+
+* {
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    font-size: 13px;
+    color: #e7e7e3;
+}
+
+QMainWindow, QWidget {
+    background-color: #16181d;
+}
+
+QLabel {
+    background: transparent;
+}
+
+QLabel[heading="true"] {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+QListWidget#sidebar {
+    background-color: #1b1e24;
+    border: none;
+    border-right: 1px solid #2a2d34;
+    padding: 12px 0;
+    outline: none;
+}
+
+QListWidget#sidebar::item {
+    padding: 10px 18px;
+    border-radius: 0;
+    color: #c7c9d1;
+}
+
+QListWidget#sidebar::item:selected {
+    background-color: #2b2f6b;
+    color: #ffffff;
+    border-left: 3px solid #8b81f0;
+}
+
+QListWidget#sidebar::item:hover:!selected {
+    background-color: #22252c;
+}
+
+QTextBrowser, QListWidget, QLineEdit {
+    background-color: #1e2127;
+    border: 1px solid #2a2d34;
+    border-radius: 8px;
+    padding: 6px;
+    selection-background-color: #4f46c6;
+}
+
+QListWidget::item {
+    padding: 6px 4px;
+    border-radius: 4px;
+}
+
+QListWidget::item:selected {
+    background-color: #2b2f6b;
+    color: #ffffff;
+}
+
+QLabel#traceLabel {
+    background-color: #1e2127;
+    border: 1px solid #2a2d34;
+    border-radius: 8px;
+    padding: 8px;
+    color: #9aa0ac;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 12px;
+}
+
+QPushButton {
+    background-color: #2a2d34;
+    border: 1px solid #353943;
+    border-radius: 8px;
+    padding: 7px 16px;
+}
+
+QPushButton:hover {
+    background-color: #353943;
+}
+
+QPushButton#primaryButton {
+    background-color: #4f46c6;
+    border: none;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+QPushButton#primaryButton:hover {
+    background-color: #5d53d6;
+}
+
+QCheckBox {
+    padding: 6px 2px;
+    spacing: 8px;
+}
+
+QSplitter::handle {
+    background-color: #2a2d34;
+    width: 2px;
+}
